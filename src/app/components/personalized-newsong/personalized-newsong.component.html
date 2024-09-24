@@ -1,0 +1,18 @@
+<div class="grid">
+  <div
+    class="grid-item"
+    *ngFor="let song of personalizedNewsong?.result"
+    (click)="play(song.id)"
+  >
+    <img class="cover" [src]="song.picUrl" alt="cover" />
+    <div class="info">
+      <p class="name">{{ song.name }}</p>
+      <p class="artists">
+        <span *ngFor="let artist of song.song.artists; last as last">
+          {{ artist.name }}
+          <span *ngIf="!last">/</span>
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
