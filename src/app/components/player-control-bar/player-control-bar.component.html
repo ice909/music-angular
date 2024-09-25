@@ -1,6 +1,18 @@
 <div class="player-control-bar">
-  <button (click)="playMusic('path/to/your/music/file.mp3')">播放</button>
-  <button (click)="pauseMusic()">暂停</button>
-  <button (click)="stopMusic()">停止</button>
-  <input type="range" min="0" max="1" step="0.01" />
+  <div class="song-info">
+    <img class="cover" [src]="currentSong?.picUrl" alt="cover" />
+    <div class="info">
+      <p class="name">{{ currentSong?.name }}</p>
+      <p class="artists">{{ currentSong?.artists }}</p>
+    </div>
+  </div>
+  <div class="control-btns">
+    <button (click)="prev()">
+      <img [src]="'/assets/previous.svg'" />
+    </button>
+    <button class="play" (click)="playPause()">
+      <img [src]="isPaused ? '/assets/play.svg' : '/assets/pause.svg'" />
+    </button>
+    <button (click)="next()"><img [src]="'/assets/next.svg'" /></button>
+  </div>
 </div>

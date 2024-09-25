@@ -23,7 +23,10 @@
       </li>
     </ul>
   </nz-sider>
-  <nz-layout class="main-layout">
+  <nz-layout
+    class="main-layout"
+    [style.marginLeft]="isCollapsed ? '80px' : '256px'"
+  >
     <nz-header>
       <div class="app-header">
         <span class="header-trigger" (click)="isCollapsed = !isCollapsed">

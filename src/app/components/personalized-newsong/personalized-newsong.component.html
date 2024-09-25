@@ -2,7 +2,7 @@
   <div
     class="grid-item"
     *ngFor="let song of personalizedNewsong?.result"
-    (click)="play(song.id)"
+    (click)="play(song)"
   >
     <img class="cover" [src]="song.picUrl" alt="cover" />
     <div class="info">

@@ -1,10 +1,7 @@
-import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { PlayerService } from '@services/player.service';
 import { NewSongResponse } from '@services/song.service';
-import { Player } from '@utils/player';
-import { SongService } from '@services/song.service';
-
 @Component({
   selector: 'app-personalized-newsong',
   standalone: true,
@@ -15,13 +12,16 @@ import { SongService } from '@services/song.service';
 export class PersonalizedNewsongComponent {
   @Input() personalizedNewsong: NewSongResponse | undefined;
 
-  constructor(private songService: SongService) { }
+  constructor(private playerService: PlayerService) { }
 
-  async play(id: number) {
-    // 获取音乐url
-    const res = await firstValueFrom(this.songService.getSongUrl(id))
-    console.log(res.data)
-    // 播放音乐
-    Player.getInstance().play(res.data[0].url)
+  async play(song: NewSongResponse["result"][0]) {
+    this.playerService.addToPlaylist({
+      id: song.id,
+      name: song.name,
+      artists: song.song.artists.map((ar) => ar.name).join('/'),
+      album: song.song.album.name,
+      duration: song.song.duration,
+      picUrl: song.song.album.picUrl
+    })
   }
 }
