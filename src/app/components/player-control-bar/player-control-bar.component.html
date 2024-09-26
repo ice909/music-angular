@@ -15,4 +15,14 @@
     </button>
     <button (click)="next()"><img [src]="'/assets/next.svg'" /></button>
   </div>
+  <div class="slider">
+    <div class="time">{{ currentTime }}</div>
+    <nz-slider
+      [nzStep]="0.01"
+      [nzMax]="10"
+      [nzMin]="0"
+      (nzOnAfterChange)="seek($event)"
+    ></nz-slider>
+    <div class="time">{{ duration }}</div>
+  </div>
 </div>

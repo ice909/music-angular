@@ -25,6 +25,8 @@ export class PlayerService extends EventEmitter {
     this.audio.addEventListener('play', () => { this.emit('playStateChange'); });
     this.audio.addEventListener('pause', () => { this.emit('playStateChange'); });
     this.audio.addEventListener('ended', () => { this.emit('playStateChange'); });
+    this.audio.addEventListener('timeupdate', () => { this.emit('timeUpdate'); })
+    this.audio.addEventListener('durationchange', () => { this.emit('durationChange'); })
     this.audio.src = song.data[0].url;
     this.audio.play();
   }
@@ -92,6 +94,36 @@ export class PlayerService extends EventEmitter {
       localStorage.setItem('volume', volume.toString());
     }
   }
+
+  // 获取当前播放进度,格式化为00:00
+  getCurrentTime(): string {
+    if (this.audio) {
+      return this.formatTime(this.audio.currentTime);
+    }
+    return '00:00';
+  }
+
+  // 获取音乐总时长,格式化为00:00
+  getDuration(): string {
+    if (this.audio) {
+      return this.formatTime(this.audio.duration);
+    }
+    return '00:00';
+  }
+
+  formatTime(time: number): string {
+    const minute = Math.floor(time / 60);
+    const second = Math.floor(time % 60);
+    return `${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+  }
+
+  // 快进
+  seek(time: number): void {
+    if (this.audio) {
+      this.audio.currentTime = time;
+    }
+  }
+
 
 }
 
