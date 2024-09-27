@@ -1,0 +1,52 @@
+<div class="playlist-detail" *ngIf="playlistInfo != undefined">
+  <div class="header">
+    <img class="cover" [src]="playlistInfo.coverImgUrl" alt="cover" />
+    <div class="info">
+      <div class="title">
+        {{ playlistInfo.name }}
+      </div>
+      <div class="description">
+        {{ playlistInfo.description }}
+      </div>
+    </div>
+  </div>
+  <div class="song-list">
+    <div
+      class="song-item"
+      *ngFor="
+        let song of songs.slice((page - 1) * limit, page * limit);
+        index as index
+      "
+    >
+      <div class="index">{{ (page - 1) * limit + index + 1 }}</div>
+      <div class="song-info">
+        <img
+          class="cover"
+          [src]="song.al.picUrl + '?param=40y40'"
+          alt="cover"
+        />
+        <div class="name">{{ song.name }}</div>
+        <div class="artists">
+          <span *ngFor="let artist of song.ar; last as last">
+            {{ artist.name }}
+            <span *ngIf="!last">/</span>
+          </span>
+        </div>
+        <div class="album">
+          <span
+            >{{ song.al.name }} <span *ngIf="song.alia.length">-</span>
+            {{ song.alia[0] }}</span
+          >
+        </div>
+      </div>
+      <div class="duration">{{ song.dt | formatTime }}</div>
+    </div>
+  </div>
+  <div class="pagination">
+    <nz-pagination
+      [(nzPageIndex)]="page"
+      [nzTotal]="count"
+      [nzPageSize]="limit"
+    ></nz-pagination>
+  </div>
+</div>

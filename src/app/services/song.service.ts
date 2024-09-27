@@ -20,6 +20,13 @@ export class SongService {
       params: { id }
     })
   }
+
+  // 获取歌曲详情
+  getSongDetail(ids: string): Observable<SongDetailResponse> {
+    return this.http.get<SongDetailResponse>('/api/song/detail', {
+      params: { ids }
+    });
+  }
 }
 
 export interface NewSongResponse {
@@ -40,7 +47,7 @@ interface Result {
   alg: string;
 }
 
-interface Song {
+export interface Song {
   name: string;
   id: number;
   position: number;
@@ -77,7 +84,6 @@ interface Song {
   originCoverType: number;
   originSongSimpleData: null;
   single: number;
-  noCopyrightRcmd: null;
   hMusic: SqMusic;
   mMusic: SqMusic;
   lMusic: SqMusic;
@@ -88,6 +94,34 @@ interface Song {
   mp3Url: null;
   transNames: string[];
   privilege: Privilege;
+  pst: number;
+  t: number;
+  ar: Ar[];
+  pop: number;
+  rt: string;
+  v: number;
+  cf: string;
+  dt: number;
+  h: H;
+  m: H;
+  l: H;
+  sq: H;
+  hr: null;
+  a: null;
+  cd: string;
+  djId: number;
+  s_id: number;
+  tagPicList: null;
+  resourceState: boolean;
+  version: number;
+  songJumpInfo: null;
+  entertainmentTags: null;
+  awardTags: null;
+  mv: number;
+  mst: number;
+  cp: number;
+  publishTime: number;
+  tns: string[];
 }
 
 interface Privilege {
@@ -243,4 +277,132 @@ interface FreeTrialPrivilege {
   cannotListenReason: null;
   playReason: null;
   freeLimitTagType: null;
+}
+
+interface SongDetailResponse {
+  songs: Song[];
+  privileges: Privilege[];
+  code: number;
+}
+
+interface Privilege {
+  id: number;
+  fee: number;
+  payed: number;
+  st: number;
+  pl: number;
+  dl: number;
+  sp: number;
+  cp: number;
+  subp: number;
+  cs: boolean;
+  maxbr: number;
+  fl: number;
+  toast: boolean;
+  flag: number;
+  preSell: boolean;
+  playMaxbr: number;
+  downloadMaxbr: number;
+  maxBrLevel: string;
+  playMaxBrLevel: string;
+  downloadMaxBrLevel: string;
+  plLevel: string;
+  dlLevel: string;
+  flLevel: string;
+  rscl: null;
+  freeTrialPrivilege: FreeTrialPrivilege;
+  rightSource: number;
+  chargeInfoList: ChargeInfoList[];
+  code: number;
+  message: null;
+}
+
+interface ChargeInfoList {
+  rate: number;
+  chargeUrl: null;
+  chargeMessage: null;
+  chargeType: number;
+}
+
+interface FreeTrialPrivilege {
+  resConsumable: boolean;
+  userConsumable: boolean;
+  listenType: null;
+  cannotListenReason: null;
+  playReason: null;
+  freeLimitTagType: null;
+}
+
+export interface Song {
+  name: string;
+  id: number;
+  pst: number;
+  t: number;
+  ar: Ar[];
+  alia: any[];
+  pop: number;
+  st: number;
+  rt: string;
+  fee: number;
+  v: number;
+  crbt: null;
+  cf: string;
+  al: Al;
+  dt: number;
+  h: H;
+  m: H;
+  l: H;
+  sq: H;
+  hr: null;
+  a: null;
+  cd: string;
+  no: number;
+  rtUrl: null;
+  ftype: number;
+  rtUrls: any[];
+  djId: number;
+  copyright: number;
+  s_id: number;
+  mark: number;
+  originCoverType: number;
+  originSongSimpleData: null;
+  tagPicList: null;
+  resourceState: boolean;
+  version: number;
+  songJumpInfo: null;
+  entertainmentTags: null;
+  awardTags: null;
+  single: number;
+  noCopyrightRcmd: null;
+  mv: number;
+  rtype: number;
+  rurl: null;
+  mst: number;
+  cp: number;
+  publishTime: number;
+  tns: string[];
+}
+
+interface H {
+  br: number;
+  fid: number;
+  size: number;
+  vd: number;
+  sr: number;
+}
+
+interface Al {
+  id: number;
+  name: string;
+  picUrl: string;
+  tns: string[];
+  pic_str: string;
+  pic: number;
+}
+
+interface Ar {
+  id: number;
+  name: string;
+  tns: any[];
+  alias: any[];
 }

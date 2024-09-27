@@ -1,6 +1,10 @@
 <!-- 一行4列，一共两行 -->
 <div class="grid">
-  <div class="grid-item" *ngFor="let playlist of personalizedPlaylist?.result">
+  <div
+    class="grid-item"
+    *ngFor="let playlist of personalizedPlaylist?.result"
+    [routerLink]="['/playlist', playlist.id]"
+  >
     <img [src]="playlist.picUrl" alt="playlist.name" />
     <p>{{ playlist.name }}</p>
   </div>
