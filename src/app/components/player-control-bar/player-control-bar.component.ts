@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { PlayerService } from '@services/player.service';
 import { PlaylistModel } from '@services/player.service';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
@@ -7,7 +8,7 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
 @Component({
   selector: 'app-player-control-bar',
   standalone: true,
-  imports: [CommonModule, NzSliderModule],
+  imports: [CommonModule, NzSliderModule, FormsModule],
   templateUrl: './player-control-bar.component.html',
   styleUrl: './player-control-bar.component.scss'
 })
@@ -21,8 +22,10 @@ export class PlayerControlBarComponent implements OnDestroy {
     artists: '未知歌手',
     duration: 0
   };
-  currentTime: string = '00:00';
-  duration: string = '00:00';
+  currentTime: number = 0;
+  currentTimeStr: string = '00:00';
+  duration: number = 0;
+  durationStr: string = '00:00';
   constructor(private player: PlayerService) {
     this.player.on('playStateChange', () => {
       console.log('playStateChange', this.player.isPaused());
@@ -34,8 +37,14 @@ export class PlayerControlBarComponent implements OnDestroy {
       this.currentSong = song;
     })
 
-    this.player.on('timeUpdate', () => { this.currentTime = this.player.getCurrentTime(); })
-    this.player.on('durationChange', () => { this.duration = this.player.getDuration(); })
+    this.player.on('timeUpdate', () => {
+      this.currentTime = this.player.getCurrentTime();
+      this.currentTimeStr = this.player.getCurrentTimeStr();
+    })
+    this.player.on('durationChange', () => {
+      this.duration = this.player.getDuration();
+      this.durationStr = this.player.getDurationStr();
+    })
   }
 
   ngOnDestroy(): void {

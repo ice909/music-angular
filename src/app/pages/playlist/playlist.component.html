@@ -11,12 +11,21 @@
     </div>
   </div>
   <div class="song-list">
+    <div class="header">
+      <div class="index">#</div>
+      <div class="cover"></div>
+      <div class="name">音乐标题</div>
+      <div class="artists">歌手</div>
+      <div class="album">专辑</div>
+      <div class="duration">时长</div>
+    </div>
     <div
       class="song-item"
       *ngFor="
         let song of songs.slice((page - 1) * limit, page * limit);
         index as index
       "
+      (click)="playSong(index)"
     >
       <div class="index">{{ (page - 1) * limit + index + 1 }}</div>
       <div class="song-info">

@@ -16,13 +16,14 @@
     <button (click)="next()"><img [src]="'/assets/next.svg'" /></button>
   </div>
   <div class="slider">
-    <div class="time">{{ currentTime }}</div>
+    <div class="time">{{ currentTimeStr }}</div>
     <nz-slider
-      [nzStep]="0.01"
-      [nzMax]="10"
+      [nzStep]="1"
+      [nzMax]="duration"
       [nzMin]="0"
+      [(ngModel)]="currentTime"
       (nzOnAfterChange)="seek($event)"
     ></nz-slider>
-    <div class="time">{{ duration }}</div>
+    <div class="time">{{ durationStr }}</div>
   </div>
 </div>

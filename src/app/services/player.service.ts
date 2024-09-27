@@ -10,6 +10,7 @@ export class PlayerService extends EventEmitter {
   private audio: HTMLAudioElement | undefined;
   private playlist: Array<PlaylistModel> = [];
   private currentIndex: number = -1;
+  private playlistId: number | "single" = "single";
 
   constructor(private songService: SongService) {
     super();
@@ -24,7 +25,7 @@ export class PlayerService extends EventEmitter {
     this.audio.volume = parseFloat(localStorage.getItem('volume') || '0.5');
     this.audio.addEventListener('play', () => { this.emit('playStateChange'); });
     this.audio.addEventListener('pause', () => { this.emit('playStateChange'); });
-    this.audio.addEventListener('ended', () => { this.emit('playStateChange'); });
+    this.audio.addEventListener('ended', () => { this.emit('playStateChange'); this.next(); });
     this.audio.addEventListener('timeupdate', () => { this.emit('timeUpdate'); })
     this.audio.addEventListener('durationchange', () => { this.emit('durationChange'); })
     this.audio.src = song.data[0].url;
@@ -35,6 +36,25 @@ export class PlayerService extends EventEmitter {
     this.playlist.push(track);
     // 播放新添加的音乐
     this.playByIndex(this.playlist.length - 1);
+  }
+
+  // 添加歌单歌曲到播放列表
+  async addSongsToPlaylist(id: number, songs: PlaylistModel[], index: number = -1): Promise<void> {
+    if (this.playlistId === id) {
+      if (index === -1) {
+        this.playByIndex(0)
+      } else {
+        this.playByIndex(index)
+      }
+    }
+    // 执行到这里说明是新的歌单
+    this.playlistId = id;
+    this.playlist = songs;
+    if (index === -1) {
+      this.playByIndex(0)
+    } else {
+      this.playByIndex(index)
+    }
   }
 
   // 播放指定下标的音乐
@@ -96,19 +116,35 @@ export class PlayerService extends EventEmitter {
   }
 
   // 获取当前播放进度,格式化为00:00
-  getCurrentTime(): string {
+  getCurrentTimeStr(): string {
     if (this.audio) {
       return this.formatTime(this.audio.currentTime);
     }
     return '00:00';
   }
 
+  // 获取当前播放进度
+  getCurrentTime(): number {
+    if (this.audio) {
+      return this.audio.currentTime;
+    }
+    return 0;
+  }
+
   // 获取音乐总时长,格式化为00:00
-  getDuration(): string {
+  getDurationStr(): string {
     if (this.audio) {
       return this.formatTime(this.audio.duration);
     }
     return '00:00';
+  }
+
+  // 获取音乐总时长
+  getDuration(): number {
+    if (this.audio) {
+      return this.audio.duration;
+    }
+    return 0;
   }
 
   formatTime(time: number): string {

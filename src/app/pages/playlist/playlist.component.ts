@@ -7,6 +7,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { SongService, Song } from '@services/song.service';
 import { FormatTimePipe } from 'src/app/pipes/format-time.pipe';
+import { PlayerService, PlaylistModel } from '@services/player.service';
 
 @Component({
   selector: 'app-playlist',
@@ -23,6 +24,7 @@ export class PlaylistComponent implements OnInit {
   limit: number = 30;
   songs: Song[] = [];
   constructor(
+    private player: PlayerService,
     public route: ActivatedRoute,
     private playlistService: PlaylistService,
     private songService: SongService
@@ -47,5 +49,24 @@ export class PlaylistComponent implements OnInit {
     })
     const res = await firstValueFrom(this.songService.getSongDetail(ids.join(',')))
     this.songs = res.songs;
+  }
+
+  async playSong(index: number) {
+    this.player.addSongsToPlaylist(this.id, this.getSongs(), (this.page - 1) * this.limit + index);
+  }
+
+  getSongs() {
+    let songs: PlaylistModel[] = [];
+    this.songs.forEach((item) => {
+      songs.push({
+        id: item.id,
+        name: item.name,
+        picUrl: item.al.picUrl,
+        album: item.al.name,
+        artists: item.ar.map((artist) => artist.name).join('/'),
+        duration: item.dt,
+      });
+    });
+    return songs;
   }
 }
