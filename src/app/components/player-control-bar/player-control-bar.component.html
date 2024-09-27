@@ -18,10 +18,11 @@
   <div class="slider">
     <div class="time">{{ currentTimeStr }}</div>
     <nz-slider
-      [nzStep]="1"
+      [nzStep]="0.1"
       [nzMax]="duration"
       [nzMin]="0"
-      [(ngModel)]="currentTime"
+      [ngModel]="currentTime"
+      [nzTipFormatter]="formatter"
       (nzOnAfterChange)="seek($event)"
     ></nz-slider>
     <div class="time">{{ durationStr }}</div>

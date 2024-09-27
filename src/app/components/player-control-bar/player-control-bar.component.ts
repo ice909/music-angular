@@ -28,8 +28,7 @@ export class PlayerControlBarComponent implements OnDestroy {
   durationStr: string = '00:00';
   constructor(private player: PlayerService) {
     this.player.on('playStateChange', () => {
-      console.log('playStateChange', this.player.isPaused());
-      this.isPaused = this.player.isPaused();
+      this.isPaused = this.player.getIsPaused();
       console.log('isPaused', this.isPaused);
     })
 
@@ -78,5 +77,11 @@ export class PlayerControlBarComponent implements OnDestroy {
 
   setVolume(volume: number): void {
     this.player.setVolume(volume);
+  }
+
+  formatter(value: number): string {
+    const minutes = Math.floor(value / 60);
+    const seconds = Math.floor(value % 60);
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 }

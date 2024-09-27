@@ -2,15 +2,20 @@ import { Injectable } from '@angular/core';
 import { EventEmitter } from 'events';
 import { SongService } from './song.service';
 import { firstValueFrom } from 'rxjs';
+import { Howler, Howl } from 'howler';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlayerService extends EventEmitter {
-  private audio: HTMLAudioElement | undefined;
+  private audio: Howl | undefined;
   private playlist: Array<PlaylistModel> = [];
   private currentIndex: number = -1;
   private playlistId: number | "single" = "single";
+  private currentTimeTimer: NodeJS.Timeout | undefined;
+  private isPaused: boolean = true;
+  private isSeeking: boolean = false;
+
 
   constructor(private songService: SongService) {
     super();
@@ -18,17 +23,40 @@ export class PlayerService extends EventEmitter {
 
   async play() {
     // 销毁之前的audio
-    this.audio?.pause();
-    this.audio = undefined;
+    Howler.unload();
+    clearInterval(this.currentTimeTimer);
     const song = await firstValueFrom(this.songService.getSongUrl(this.playlist[this.currentIndex].id))
-    this.audio = new Audio();
-    this.audio.volume = parseFloat(localStorage.getItem('volume') || '0.5');
-    this.audio.addEventListener('play', () => { this.emit('playStateChange'); });
-    this.audio.addEventListener('pause', () => { this.emit('playStateChange'); });
-    this.audio.addEventListener('ended', () => { this.emit('playStateChange'); this.next(); });
-    this.audio.addEventListener('timeupdate', () => { this.emit('timeUpdate'); })
-    this.audio.addEventListener('durationchange', () => { this.emit('durationChange'); })
-    this.audio.src = song.data[0].url;
+    this.audio = new Howl({
+      src: [song.data[0].url],
+      format: ["mp3", "flac"],
+      html5: true,
+      preload: "metadata",
+      volume: parseFloat(localStorage.getItem('volume') || '0.5'),
+      onplay: () => {
+        this.isPaused = false;
+        this.emit('playStateChange');
+        this.currentTimeTimer = setInterval(() => {
+          if (!this.isSeeking) {
+            this.emit('timeUpdate');
+          }
+        }, 100)
+        this.emit('durationChange');
+
+      },
+      onpause: () => {
+        this.isPaused = true;
+        this.emit('playStateChange');
+        clearInterval(this.currentTimeTimer);
+      },
+      onstop: () => {
+        this.isPaused = true;
+        this.emit('playStateChange');
+        clearInterval(this.currentTimeTimer);
+      },
+      onend: () => {
+        this.next();
+      },
+    });
     this.audio.play();
   }
 
@@ -68,8 +96,8 @@ export class PlayerService extends EventEmitter {
   }
 
   playPause() {
-    if (this.audio?.paused) {
-      this.audio.play();
+    if (this.isPaused) {
+      this.audio?.play();
     } else {
       this.pause();
     }
@@ -79,8 +107,11 @@ export class PlayerService extends EventEmitter {
     this.audio?.pause();
   }
 
-  isPaused(): boolean {
-    return this.audio ? this.audio.paused : true;
+  getIsPaused(): boolean {
+    if (this.audio) {
+      return this.isPaused;
+    }
+    return true;
   }
 
   // 上一首
@@ -110,7 +141,7 @@ export class PlayerService extends EventEmitter {
 
   setVolume(volume: number): void {
     if (this.audio) {
-      this.audio.volume = volume;
+      this.audio.volume(volume);
       localStorage.setItem('volume', volume.toString());
     }
   }
@@ -118,7 +149,7 @@ export class PlayerService extends EventEmitter {
   // 获取当前播放进度,格式化为00:00
   getCurrentTimeStr(): string {
     if (this.audio) {
-      return this.formatTime(this.audio.currentTime);
+      return this.formatTime(this.audio.seek());
     }
     return '00:00';
   }
@@ -126,7 +157,7 @@ export class PlayerService extends EventEmitter {
   // 获取当前播放进度
   getCurrentTime(): number {
     if (this.audio) {
-      return this.audio.currentTime;
+      return this.audio.seek();
     }
     return 0;
   }
@@ -134,7 +165,7 @@ export class PlayerService extends EventEmitter {
   // 获取音乐总时长,格式化为00:00
   getDurationStr(): string {
     if (this.audio) {
-      return this.formatTime(this.audio.duration);
+      return this.formatTime(this.audio.duration());
     }
     return '00:00';
   }
@@ -142,7 +173,7 @@ export class PlayerService extends EventEmitter {
   // 获取音乐总时长
   getDuration(): number {
     if (this.audio) {
-      return this.audio.duration;
+      return this.audio.duration();
     }
     return 0;
   }
@@ -155,9 +186,12 @@ export class PlayerService extends EventEmitter {
 
   // 快进
   seek(time: number): void {
+    this.isSeeking = true;
     if (this.audio) {
-      this.audio.currentTime = time;
+      this.audio.seek(time);
+      console.log('seek', time);
     }
+    this.isSeeking = false;
   }
 
 
