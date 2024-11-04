@@ -3,12 +3,12 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PlayerService } from '@services/player.service';
 import { PlaylistModel } from '@services/player.service';
-import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { SliderChangeEvent, SliderModule } from "primeng/slider"
 
 @Component({
   selector: 'app-player-control-bar',
   standalone: true,
-  imports: [CommonModule, NzSliderModule, FormsModule],
+  imports: [CommonModule, SliderModule, FormsModule],
   templateUrl: './player-control-bar.component.html',
   styleUrl: './player-control-bar.component.scss'
 })
@@ -42,6 +42,7 @@ export class PlayerControlBarComponent implements OnDestroy {
     })
     this.player.on('durationChange', () => {
       this.duration = this.player.getDuration();
+      console.log(this.duration)
       this.durationStr = this.player.getDurationStr();
     })
   }
@@ -67,12 +68,10 @@ export class PlayerControlBarComponent implements OnDestroy {
     this.player.next();
   }
 
-  seek(time: number[] | number): void {
-    if (Array.isArray(time)) {
-      this.player.seek(time[1] * 10);
-    } else {
-      this.player.seek(time * 10);
-    }
+  seek(event: SliderChangeEvent): void {
+    console.log(event.value);
+    if (event.value)
+      this.player.seek(event.value);
   }
 
   setVolume(volume: number): void {

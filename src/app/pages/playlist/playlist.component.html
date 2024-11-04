@@ -52,10 +52,10 @@
     </div>
   </div>
   <div class="pagination">
-    <nz-pagination
-      [(nzPageIndex)]="page"
-      [nzTotal]="count"
-      [nzPageSize]="limit"
-    ></nz-pagination>
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [rows]="limit"
+      [totalRecords]="count"
+    />
   </div>
 </div>

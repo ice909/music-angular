@@ -3,8 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PlaylistService, Playlist } from '@services/playlist.service';
 import { firstValueFrom } from 'rxjs';
-import { NzPaginationModule } from 'ng-zorro-antd/pagination';
-import { NzTableModule } from 'ng-zorro-antd/table';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { SongService, Song } from '@services/song.service';
 import { FormatTimePipe } from 'src/app/pipes/format-time.pipe';
 import { PlayerService, PlaylistModel } from '@services/player.service';
@@ -12,7 +11,7 @@ import { PlayerService, PlaylistModel } from '@services/player.service';
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  imports: [CommonModule, NzPaginationModule, NzTableModule, FormatTimePipe],
+  imports: [CommonModule, PaginatorModule, FormatTimePipe],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss'
 })
@@ -68,5 +67,10 @@ export class PlaylistComponent implements OnInit {
       });
     });
     return songs;
+  }
+  onPageChange(event: PaginatorState) {
+    console.log(event.page)
+    if (event.page)
+      this.page = event.page + 1;
   }
 }

@@ -36,9 +36,7 @@ export class PlayerService extends EventEmitter {
         this.isPaused = false;
         this.emit('playStateChange');
         this.currentTimeTimer = setInterval(() => {
-          if (!this.isSeeking) {
-            this.emit('timeUpdate');
-          }
+          this.emit('timeUpdate');
         }, 100)
         this.emit('durationChange');
 
